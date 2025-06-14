@@ -10,7 +10,77 @@
 ### câu 4
 ### CRUD student
 ![Screenshot 2025-06-14 114346](https://github.com/user-attachments/assets/0e8881c5-f61a-4c85-a014-700f011b49e3)
+### câu5 
+Câu 5. Bảo mật (Security) trong Project
+Trong project quản lý sinh viên bằng Laravel, em đã áp dụng các kỹ thuật bảo mật tiêu chuẩn để đảm bảo hệ thống an toàn, cụ thể:
 
+1. CSRF (Cross-Site Request Forgery)
+Laravel tự động chèn CSRF token vào form thông qua @csrf:
+
+<form method="POST" action="{{ route('students.store') }}">
+    @csrf
+    <!-- input fields -->
+</form>
+🛡 Giúp ngăn chặn các yêu cầu giả mạo gửi từ bên thứ ba.
+
+2. XSS (Cross-Site Scripting)
+Laravel sử dụng cú pháp {{ $value }} để escape HTML tự động:
+
+<td>{{ $student->name }}</td>
+Tránh việc chèn mã JavaScript độc hại vào website.
+
+3. Data Validation (Xác thực dữ liệu đầu vào)
+Áp dụng FormRequest hoặc validate() để kiểm tra dữ liệu:
+
+$request->validate([
+    'name' => 'required|string|max:255',
+    'email' => 'required|email|unique:students,email',
+]);
+Ngăn dữ liệu rác, dữ liệu sai định dạng hoặc tấn công thông qua form.
+
+4. Authentication (Xác thực người dùng)
+Sử dụng guard của Laravel để xác thực đăng nhập:
+
+$request->authenticate();
+$request->session()->regenerate();
+Đảm bảo chỉ người dùng hợp lệ mới truy cập được hệ thống.
+
+5. Authorization (Phân quyền)
+Tạo middleware CheckAdmin để phân quyền:
+
+
+public function handle(Request $request, Closure $next)
+{
+    if (auth()->check() && auth()->user()->role === 'admin') {
+        return $next($request);
+    }
+
+    abort(403, 'Bạn không có quyền truy cập.');
+}
+Đăng ký middleware:
+
+php
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::resource('students', StudentController::class);
+});
+Đảm bảo chỉ admin được quyền thao tác với dữ liệu quản trị.
+
+7. SQL Injection
+Laravel sử dụng Eloquent và Query Builder thay vì raw SQL:
+Student::where('class', $request->input('class'))->get();
+Biến đầu vào được ràng buộc, chống lại tấn công SQL injection.
+### câu 6
+### bảng students
+![Screenshot 2025-06-14 120253](https://github.com/user-attachments/assets/dcd7eb6f-fd71-427c-8343-f37626cfa537)
+### bảng subject
+![Screenshot 2025-06-14 120358](https://github.com/user-attachments/assets/3af84350-82b7-46ff-8728-2c3be5ab053d)
+### bảng score
+![Screenshot 2025-06-14 120453](https://github.com/user-attachments/assets/68f20be4-40a7-4bb6-bde2-d2ef166e120f)
+
+### bảng attendance
+![Screenshot 2025-06-14 120554](https://github.com/user-attachments/assets/b3e065aa-c4c6-43c9-8db1-4a67fe2c0804)
+### câu7 
+public link : 
 ---
 
 ## Các chức năng chính
