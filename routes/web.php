@@ -14,15 +14,18 @@ Route::get('/', function () {
         return redirect()->route('login');
     }
 
-    $user = Auth::user();
-
-    if ($user->role === 'admin') {
-        return redirect('/students');
-    } else {
-        return redirect('/dashboard');
-    }
+    return Auth::user()->role === 'admin'
+        ? redirect()->route('students.index')
+        : redirect()->route('dashboard');
 });
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth'])->prefix('dashboard')->group(function () {
+    Route::get('/', fn() => view('dashboard'))->name('dashboard');
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('students', StudentController::class);
     Route::resource('subjects', SubjectController::class);
     Route::prefix('students/{student}')->as('students.')->group(function () {
@@ -32,14 +35,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/scores', [ScoreController::class, 'allScores'])->name('scores.all');
     Route::get('/attendances', [AttendanceController::class, 'allAttendances'])->name('attendances.all');
 });
-Route::middleware('auth')->prefix('dashboard')->group(function () {
-    Route::get('/', function () {
-        return view('dashboard');
-    })->name('dashboard');
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-// Load các route auth từ file riêng auth.php
+
 require __DIR__ . '/auth.php';
