@@ -2,7 +2,14 @@
 
 ## Giới thiệu
 
-Hệ thống giúp quản lý toàn diện thông tin sinh viên, môn học, điểm số và điểm danh. Được xây dựng theo mô hình **MVC của Laravel**, dễ mở rộng và bảo trì.
+### câu 2 Hệ thống giúp quản lý toàn diện thông tin sinh viên, môn học, điểm số và điểm danh. Được xây dựng theo mô hình **MVC của Laravel**, dễ mở rộng và bảo trì.
+## Xác thực & Phân quyền
+### câu 3 
+- **Admin**: Có quyền truy cập và chỉnh sửa toàn bộ dữ liệu.
+- **Người dùng thông thường**: Truy cập dashboard và profile cá nhân.
+### câu 4
+### CRUD student
+![Screenshot 2025-06-14 114346](https://github.com/user-attachments/assets/0e8881c5-f61a-4c85-a014-700f011b49e3)
 
 ---
 
@@ -162,10 +169,6 @@ Tất cả API trả về JSON.
 
 ---
 
-## Xác thực & Phân quyền
-
-- **Admin**: Có quyền truy cập và chỉnh sửa toàn bộ dữ liệu.
-- **Người dùng thông thường**: Truy cập dashboard và profile cá nhân.
 
 ---
 
