@@ -14,23 +14,24 @@ class ScoreController extends Controller
     {
         $subjectName = $request->query('subject_name');
         $studentName = $request->query('student_name');
-        $scores = Score::with(['student', 'subject'])
-            ->when($subjectName, function ($query) use ($subjectName) {
-                $query->whereHas('subject', function ($q) use ($subjectName) {
-                    $q->where('name', 'like', '%' . $subjectName . '%');
-                });
-            })
-            ->when($studentName, function ($query) use ($studentName) {
-                $query->whereHas('student', function ($q) use ($studentName) {
-                    $q->where('name', 'like', '%' . $studentName . '%');
-                });
-            })
-            ->get();
+
+        $scores = Score::with(['student', 'subject'])->get();
+        if (!empty($subjectName)) {
+            $scores = $scores->filter(function ($score) use ($subjectName) {
+                return stripos($score->subject->name, $subjectName) !== false;
+            });
+        }
+        if (!empty($studentName)) {
+            $scores = $scores->filter(function ($score) use ($studentName) {
+                return stripos($score->student->name, $studentName) !== false;
+            });
+        }
         if ($request->has('fail')) {
             $scores = $scores->filter(function ($score) {
                 return $score->score !== null && $score->score < 4;
             });
         }
+
         return view('students.scores.all', [
             'scores' => $scores,
             'search' => $subjectName,
@@ -39,62 +40,66 @@ class ScoreController extends Controller
     }
     public function index(Request $request, Student $student)
     {
-        $sort = $request->query('sort', '');
-        $filter = $request->query('filter', '');
-        $scores = $student->scores()->with('subject')
-            ->when($sort === 'score_desc', function ($query) {
-                return $query->orderBy('score', 'desc');
-            })
-            ->when($sort === 'score_asc', function ($query) {
-                return $query->orderBy('score', 'asc');
-            })
-            ->when($filter === 'fail', function ($query) {
-                return $query->where('score', '<', 4);
-            })
-            ->get();
-
-        return view('students.scores.index', compact('student', 'scores', 'sort', 'filter'));
+        $scores = $student->scores()->with('subject')->get();
+        return view('students.scores.index', [
+            'student' => $student,
+            'scores' => $scores
+        ]);
     }
-
     public function create(Student $student)
     {
-        $subjectIdsWithScore = $student->scores()->pluck('subject_id');
-        $subjects = Subject::whereNotIn('id', $subjectIdsWithScore)->get();
+        $subjectIds = [];
+
+        foreach ($student->scores as $score) {
+            $subjectIds[] = $score->subject_id;
+        }
+
+        $subjects = Subject::whereNotIn('id', $subjectIds)->get();
+
         return view('students.scores.create', compact('student', 'subjects'));
     }
 
     public function store(Request $request, Student $student)
     {
-        $subject = Subject::find($request->subject_id);
-        if (!$subject) {
-            return redirect()->back()->with('error', 'Môn học không tồn tại');
-        }
-
-        $existingScore = $student->scores()->where('subject_id', $request->subject_id)->first();
-        if ($existingScore) {
-            return redirect()->back()->with('error', 'Môn học này đã có điểm, không thể thêm lại!');
-        }
-
         $request->validate([
             'subject_id' => 'required|exists:subjects,id',
             'cc2' => 'required|numeric|min:0|max:10',
             'midterm' => 'required|numeric|min:0|max:10',
             'final' => 'required|numeric|min:0|max:10',
         ]);
+
+        $subject = Subject::find($request->subject_id);
+        if (!$subject) {
+            return back()->with('error', 'Môn học không tồn tại.');
+        }
+        foreach ($student->scores as $score) {
+            if ($score->subject_id == $request->subject_id) {
+                return back()->with('error', 'Môn học này đã có điểm.');
+            }
+        }
         $attendance = Attendance::where('student_id', $student->id)
             ->where('subject_id', $request->subject_id)
             ->first();
-        $cc1 = $attendance ? max(10 - ($attendance->absent_sessions * 3), 0) : 10;
 
-        $totalScore = ($cc1 * 0.05) + ($request->cc2 * 0.05) + ($request->midterm * 0.3) + ($request->final * 0.6);
+        $cc1 = 10;
 
-        $score = $student->scores()->create([
+        if ($attendance) {
+            $cc1 = 10 - ($attendance->absent_sessions * 3);
+            if ($cc1 < 0) {
+                $cc1 = 0;
+            }
+        }
+
+        $total = $cc1 * 0.05 + $request->cc2 * 0.05 + $request->midterm * 0.3 + $request->final * 0.6;
+
+        Score::create([
+            'student_id' => $student->id,
             'subject_id' => $request->subject_id,
             'cc1' => $cc1,
             'cc2' => $request->cc2,
             'midterm' => $request->midterm,
             'final' => $request->final,
-            'score' => $totalScore,
+            'score' => $total,
         ]);
 
         return redirect()->route('students.scores.index', $student->id)->with('success', 'Thêm điểm thành công');
@@ -116,15 +121,22 @@ class ScoreController extends Controller
         $attendance = Attendance::where('student_id', $student->id)
             ->where('subject_id', $score->subject_id)
             ->first();
-        $cc1 = $attendance ? max(10 - ($attendance->absent_sessions * 3), 0) : 10;
 
-        $score->update([
-            'cc1' => $cc1,
-            'cc2' => $request->cc2,
-            'midterm' => $request->midterm,
-            'final' => $request->final,
-            'score' => $score->calculateTotalScore(),
-        ]);
+        $cc1 = 10;
+
+        if ($attendance) {
+            $cc1 = 10 - ($attendance->absent_sessions * 3);
+            if ($cc1 < 0) {
+                $cc1 = 0;
+            }
+        }
+
+        $score->cc1 = $cc1;
+        $score->cc2 = $request->cc2;
+        $score->midterm = $request->midterm;
+        $score->final = $request->final;
+        $score->score = $score->calculateTotalScore();
+        $score->save();
 
         return redirect()->route('students.scores.index', $student->id)->with('success', 'Cập nhật điểm thành công');
     }
@@ -132,6 +144,7 @@ class ScoreController extends Controller
     public function destroy(Student $student, Score $score)
     {
         $score->delete();
+
         return redirect()->route('students.scores.index', $student->id)->with('success', 'Xóa điểm thành công');
     }
 }
