@@ -20,7 +20,7 @@
     <h3>Cập nhật sinh viên</h3>
     <form action="{{ route('students.update', $student->id) }}" method="POST">
         @csrf
-        @method('PUT') <!-- Phương thức PUT để thực hiện cập nhật -->
+        @method('PUT') 
         
         <div class="form-group">
             <label for="name">Tên:</label>
