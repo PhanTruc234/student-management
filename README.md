@@ -9,7 +9,8 @@
 - **Người dùng thông thường**: Truy cập dashboard và profile cá nhân.
 ### câu 4
 ### CRUD student
-![Screenshot 2025-06-14 114346](https://github.com/user-attachments/assets/0e8881c5-f61a-4c85-a014-700f011b49e3)
+![Screenshot 2025-06-16 195002](https://github.com/user-attachments/assets/7e0d3e71-f49c-4cf4-b95a-1fa37f53a98e)
+
 ### Câu 5
 ### Bảo mật (Security) trong Project
 Trong project quản lý sinh viên bằng Laravel, em đã áp dụng các kỹ thuật bảo mật tiêu chuẩn để đảm bảo hệ thống an toàn, cụ thể:
@@ -178,12 +179,12 @@ Model attendance
 ![Screenshot 2025-06-14 112317](https://github.com/user-attachments/assets/7bef0a47-f7f1-47ba-b825-e7514ed6a2d8)
 ### Controller
 StudentController 
-![Screenshot 2025-06-14 112427](https://github.com/user-attachments/assets/e930f3bc-5665-4e08-8842-fd5ba2bbbde7)
+![Screenshot 2025-06-16 195002](https://github.com/user-attachments/assets/11d68d3f-b01c-4819-bf84-b5ce05ce5155)
 ScoreController 
-![Screenshot 2025-06-14 112516](https://github.com/user-attachments/assets/315fcfa9-04e2-43a8-aef2-964a6975150b)
+![Screenshot 2025-06-16 195117](https://github.com/user-attachments/assets/b8c90375-6335-45af-9eff-5b5063d94ac5)
 ### View
 student 
-![Screenshot 2025-06-14 112614](https://github.com/user-attachments/assets/8707a1ae-1ff7-40b9-bd05-5afc428d9c22)
+![Screenshot 2025-06-16 195208](https://github.com/user-attachments/assets/a5c58757-c7cc-4d64-b57e-9cc6c6a2988a)
 score 
 ![image](https://github.com/user-attachments/assets/c00eeec2-9789-4512-9379-0116e6795f05)
 
