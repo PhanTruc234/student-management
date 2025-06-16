@@ -3,8 +3,6 @@
 @section('title', 'Tất cả điểm danh sinh viên')
 
 @section('content')
-
-<!-- Form tìm kiếm môn học -->
 <form method="GET" action="{{ route('attendances.all') }}" class="mb-4">
     <div class="input-group mb-4">
         <input 
