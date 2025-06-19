@@ -7,10 +7,16 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
+                <div class="text-gray-900 dark:text-gray-100 mb-4">
                     {{ __("You're logged in!") }}
                 </div>
+                @if (Auth::user()->role === 'admin')
+                    <a href="{{ route('students.index') }}"
+                       class="inline-block bg-indigo-600 hover:bg-indigo-700  font-semibold py-2 px-4 rounded text-black">
+                        Quản trị
+                    </a>
+                @endif
             </div>
         </div>
     </div>
