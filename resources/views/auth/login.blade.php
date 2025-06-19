@@ -44,4 +44,12 @@
             </x-primary-button>
         </div>
     </form>
+    <div class="mt-6 text-center">
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+            {{ __('Chưa có tài khoản?') }}
+            <a href="{{ route('register') }}" class="text-indigo-600 hover:underline">
+                {{ __('Sign up') }}
+            </a>
+        </p>
+    </div>
 </x-guest-layout>
