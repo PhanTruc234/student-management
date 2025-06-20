@@ -6,7 +6,8 @@
 ## Xác thực & Phân quyền
 ### câu 3 
 - **Admin**: Có quyền truy cập và chỉnh sửa toàn bộ dữ liệu.
-- **Người dùng thông thường**: Truy cập dashboard và profile cá nhân.
+- **Người dùng thông thường**: Truy cập dashboard
+  
 ### câu 4
 ### CRUD student
 ![Screenshot 2025-06-16 195002](https://github.com/user-attachments/assets/7e0d3e71-f49c-4cf4-b95a-1fa37f53a98e)
@@ -78,7 +79,7 @@ Student::where('class', $request->input('class'))->get();
 ![Screenshot 2025-06-14 120554](https://github.com/user-attachments/assets/b3e065aa-c4c6-43c9-8db1-4a67fe2c0804)
 ### câu7 
 public link : 
----
+--- https://student-management-production-51e8.up.railway.app/login
 
 ## Các chức năng chính
 
