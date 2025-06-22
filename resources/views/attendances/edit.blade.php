@@ -28,10 +28,11 @@
                 @for ($i = 1; $i <= $attendance->subject->total_sessions; $i++)
                         <div class="col-2 mb-2">
                         <label class="form-check-label">
-                        <input type="checkbox" name="sessions[{{ $i - 1 }}]" value="1" class="form-check-input"
-                        {{ !empty($attendance->session_details[$i - 1]) ? 'checked' : '' }}>
+                        <input type="checkbox" name="sessions[{{ $i - 1 }}]" value="1"
+                        {{ empty($attendance->session_details[$i - 1]) ? 'checked' : '' }}>
                         Buổi {{ $i }}
                         </label>
+                        {{-- !empty(...) là để kiểm tra xem giá trị tại vị trí đó có phải là true/1 không. --}}
                     </div>
                 @endfor
             </div>
