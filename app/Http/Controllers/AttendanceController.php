@@ -110,11 +110,20 @@ class AttendanceController extends Controller
     {
         $total = $attendance->subject->total_sessions;
 
-        $details = json_decode($attendance->session_details, true);
+        $details = $attendance->session_details;
+        if (is_string($details)) {
+            $details = json_decode($details, true);
+        }
+        if (!is_array($details) || array_keys($details) !== range(0, count($details) - 1)) {
+            $normalized = [];
+            for ($i = 1; $i <= $total; $i++) {
+                $normalized[] = !empty($details["session_$i"]);
+            }
+            $details = $normalized;
+        }
         if (!is_array($details)) {
             $details = array_fill(0, $total, false);
         }
-
         $attendance->session_details = $details;
 
         return view('attendances.edit', compact('attendance', 'student'));
