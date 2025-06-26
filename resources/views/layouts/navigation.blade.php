@@ -34,6 +34,12 @@
                     </x-slot>
 
                     <x-slot name="content">
+                        @if (Auth::user()->role === 'admin')
+                            <a href="{{ route('students.index') }}"
+                                class="inline-block bg-indigo-600 hover:bg-indigo-700  font-semibold py-2 px-4 rounded text-black">
+                                Quản trị
+                            </a>
+                        @endif
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
                         </x-dropdown-link>
