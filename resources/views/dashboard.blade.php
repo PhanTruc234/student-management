@@ -11,12 +11,6 @@
                 <div class="text-gray-900 dark:text-gray-100 mb-4">
                     {{ __("You're logged in!") }}
                 </div>
-                @if (Auth::user()->role === 'admin')
-                    <a href="{{ route('students.index') }}"
-                       class="inline-block bg-indigo-600 hover:bg-indigo-700  font-semibold py-2 px-4 rounded text-black">
-                        Quản trị
-                    </a>
-                @endif
             </div>
         </div>
     </div>
