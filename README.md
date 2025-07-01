@@ -43,6 +43,10 @@ Sử dụng guard của Laravel để xác thực đăng nhập:
 ```html 
 $request->authenticate();
 $request->session()->regenerate();
+public function __construct()
+{
+    $this->middleware('auth');
+}
 ```
 5. **Authorization**
 Tạo middleware CheckAdmin để phân quyền:
